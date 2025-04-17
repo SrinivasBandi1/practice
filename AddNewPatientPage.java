@@ -1,11 +1,14 @@
 package com.intelehealth.pages;
 
+import java.time.Duration;
 import java.time.Year;
 import java.util.List;
 import java.util.Locale;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 
@@ -13,7 +16,16 @@ import com.github.javafaker.Faker;
 import com.intelehealth.base.BaseTest;
 
 import io.appium.java_client.AppiumBy;
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.TouchAction;
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Page class representing the Add New Patient screen. Contains elements,
@@ -26,15 +38,15 @@ public class AddNewPatientPage extends BaseTest {
 
 	@AndroidFindBy(id = "org.intelehealth.app:id/btn_accept_privacy")
 	private WebElement acceptButton;
-	@AndroidFindBy(accessibility = "//android.widget.TextView[@text='Add new patient']")
+	@AndroidFindBy(accessibility = "Identification Activity Title TextView")
 	private WebElement addNewPatientTitle;
 	@AndroidFindBy(id = "org.intelehealth.app:id/textInputETPhoneNumber")
 	private WebElement inpPhoneNumber;
 	@AndroidFindBy(id = "org.intelehealth.app:id/btn_accept_consent")
 	private WebElement acceptButtonInProcessingPersonalData;
-	@AndroidFindBy(id = "org.intelehealth.app:id/tvIndicatorPatientPersonal")
+	@AndroidFindBy(accessibility = "Identification Activity Personal Icon ImageView")
 	private WebElement personal;
-	@AndroidFindBy(id = "org.intelehealth.app:id/tvIndicatorPatientPersonal")
+	@AndroidFindBy(accessibility = "Identification Activity Personal Title TextView")
 	private WebElement personalText;
 	@AndroidFindBy(xpath = "//android.widget.Button[@text='Decline']")
 	private WebElement declineButton;
@@ -80,6 +92,7 @@ public class AddNewPatientPage extends BaseTest {
 
 	@AndroidFindBy(xpath = "//android.view.View[contains(@content-desc, '18')]")
 	private WebElement date;
+
 	@AndroidFindBy(id = "org.intelehealth.app:id/textInputETAge")
 	private WebElement ageTextBox;
 
@@ -88,9 +101,11 @@ public class AddNewPatientPage extends BaseTest {
 
 	@AndroidFindBy(id = "org.intelehealth.app:id/lblPostalCode")
 	private WebElement postalCodeTitle;
+
 	@AndroidFindBy(id = "org.intelehealth.app:id/textInputPostalCode")
 	private WebElement postalCode;
-	@AndroidFindBy(id = "org.intelehealth.app:id/tvPostalCodeValueAddressDetails")
+
+	@AndroidFindBy(id = "org.intelehealth.app:id/postalcode")
 	private WebElement postalCodeValue;
 
 	@AndroidFindBy(id = "org.intelehealth.app:id/autoCompleteState")
@@ -148,13 +163,13 @@ public class AddNewPatientPage extends BaseTest {
 	@AndroidFindBy(id = "org.intelehealth.app:id/startVisitBtn")
 	private WebElement startVisitButton;
 
-	@AndroidFindBy(accessibility = "Patient Registration Dialog Title TextView")
+	@AndroidFindBy(id = "org.intelehealth.app:id/dialog_title")
 	private WebElement patientRegistrationDialogTitle;
 
-	@AndroidFindBy(accessibility = "Patient Registration Dialog Subtitle TextView")
+	@AndroidFindBy(id = "org.intelehealth.app:id/dialog_subtitle")
 	private WebElement patientRegistrationSubTitle;
 
-	@AndroidFindBy(accessibility = "Patient Registration Dialog Negative (No) Button")
+	@AndroidFindBy(id = "org.intelehealth.app:id/negative_btn")
 	private WebElement cancelButton;
 
 	@AndroidFindBy(id = "org.intelehealth.app:id/positive_btn")
@@ -162,50 +177,56 @@ public class AddNewPatientPage extends BaseTest {
 	@AndroidFindBy(accessibility = "Visit Creation Subtitle TextView")
 	// Visit Creation Subtitle TextView-vitals")
 	private WebElement visitCreationVitalsTitle;
-	@AndroidFindBy(accessibility = "Visit Creation Subtitle TextView")
+	@AndroidFindBy(accessibility = "//android.widget.TextView[@resource-id='org.intelehealth.app:id/tv_sub_title' and @text='1/4 Vitals']")
 	// Visit Creation Subtitle TextView-vitals")
 	private WebElement visitCreationVitalsScreen;
-	@AndroidFindBy(accessibility = "Find Patient List Item Prescription Received TextView")
+	@AndroidFindBy(xpath = "//android.widget.TextView[@text='Prescription received']")
 	private WebElement prescriptionReceived;
 	@AndroidFindBy(accessibility = "Patient Details Patient Name TextView")
 	private WebElement patientName;
-	@AndroidFindBy(accessibility = "Patient Details Patient OpenMRS ID TextView")
+	@AndroidFindBy(id = "org.intelehealth.app:id/openmrsID_txt")
 	private WebElement patientID;
 	@AndroidFindBy(accessibility = "Patient Details Screen Personal Details Header Title TextView")
 	private WebElement personalDetails;
 	@AndroidFindBy(accessibility = "Patient Details Title TextView")
 	private WebElement patientDetails;
-	@AndroidFindBy(accessibility = "Visit Summary Title TextView")
+	@AndroidFindBy(id = "org.intelehealth.app:id/toolbar_title")
 	private WebElement visitSummaryTitle;
 	@AndroidFindBy(accessibility = " Summary Item Card Vitals Title TextView")
 	private WebElement vitalsTitle;
 	@AndroidFindBy(accessibility = "Visit Summary Item Card Vitals Title TextView")
 	private WebElement vitalsTitleInVisitSummary;
 
-	@AndroidFindBy(accessibility = "Visit Summary Item Card Visit Reason Title TextView")
+	@AndroidFindBy(xpath = "//android.widget.TextView[@text='Reason for visit']")
 	private WebElement visitReason;
-	@AndroidFindBy(accessibility = "Visit Summary Item Card Physical Exam Title TextView")
+	@AndroidFindBy(xpath = "//android.widget.TextView[@text='Physical Examination']")
 	private WebElement physicalExamination;
-	@AndroidFindBy(accessibility = "Visit Summary Item Card Medical History Title TextView")
+
+	@AndroidFindBy(xpath = "//android.widget.TextView[@text='Medical history']")
 	private WebElement medicalHistory;
 
-	@AndroidFindBy(accessibility = "Visit Summary Add Documents Title TextView")
+	@AndroidFindBy(id = "org.intelehealth.app:id/add_docs_title")
 	private WebElement additionalDocument;
-	@AndroidFindBy(accessibility = "Visit Summary Speciality Title TextView")
+
+	@AndroidFindBy(xpath = "//android.widget.TextView[@text='Doctor's Speciality']")
 	private WebElement doctorsSpeciality;
-	@AndroidFindBy(accessibility = "Visit Summary Priority Checkbox SwitchMaterial")
+
+	@AndroidFindBy(accessibility = "org.intelehealth.app:id/flaggedcheckbox")
 	private WebElement priorityToggle;
+
 	@AndroidFindBy(accessibility = "Visit Summary Print Button")
 	private WebElement printButton;
-	@AndroidFindBy(accessibility = "Visit Summary Share Button")
-	private WebElement shareButton;
-	@AndroidFindBy(accessibility = "Visit Summary Chat Fab")
+
+	@AndroidFindBy(id = "org.intelehealth.app:id/btnPrescriptionView")
+	private WebElement btnViewPrescription;
+
+	@AndroidFindBy(id = "org.intelehealth.app:id/fabStartChat")
 	private WebElement chatIcon;
 
-	@AndroidFindBy(accessibility = "Past Visit List Item Chief Complaint TextView")
-	private WebElement arrow;
+	@AndroidFindBy(id = "org.intelehealth.app:id/chiefcomplaint_header_relative")
+	private WebElement lblOpnVisitChiefComplaint;
 
-	@AndroidFindBy(accessibility = "Find Patient List Item Prescription Pending TextView")
+	@AndroidFindBy(xpath = "(//android.widget.TextView[@text=\"Prescription pending\"])[1]")
 	private WebElement prescriptionPending;
 
 	@AndroidFindBy(accessibility = "Patient Details Open Visits Title TextView")
@@ -226,43 +247,43 @@ public class AddNewPatientPage extends BaseTest {
 	@AndroidFindBy(accessibility = "Patient Details Screen Address Details Edit Icon ImageView")
 	private WebElement addressDetailsChangeIcon;
 
-	@AndroidFindBy(accessibility = "Patient Details Screen Personal Details 'Name' Value TextView")
+	@AndroidFindBy(accessibility = "org.intelehealth.app:id/national_ID")
 	private WebElement updatedName;
 
-	@AndroidFindBy(accessibility = "Patient Details Screen Other Details Edit Icon ImageView")
+	@AndroidFindBy(xpath = "//android.widget.TextView[@text='Change']")
 	private WebElement otherDetailsChangeIcon;
 	@AndroidFindBy(accessibility = "Patient Details Screen Other Details Header Title TextView")
 	private WebElement otherDetailsTitle;
 
 	@AndroidFindBy(id = "org.intelehealth.app:id/lblNationalId")
 	private WebElement nationalIdLabel;
-	@AndroidFindBy(xpath = "//android.widget.Button[@text='Save']")
+	@AndroidFindBy(id = "org.intelehealth.app:id/frag2_btn_next")
 	private WebElement saveButton;
 
 	@AndroidFindBy(accessibility = "Patient Details Refresh ImageView")
 	private WebElement refreshButton;
-	@AndroidFindBy(accessibility = "Custom Toolbar App Sync Time TextView")
+	@AndroidFindBy(id = "org.intelehealth.app:id/tv_app_sync_time")
 	private WebElement appSyncTime;
 
-	@AndroidFindBy(id = "org.intelehealth.app:id/ivInternetCustomToolbar")
+	@AndroidFindBy(id = "org.intelehealth.app:id/imageview_is_internet")
 	private WebElement refreshButtonInHomeScreen;
 
-	@AndroidFindBy(accessibility = "Identification First Screen Camera ImageView")
+	@AndroidFindBy(xpath = "//android.widget.ImageView[@content-desc='Add a picture']")
 	private WebElement addPicture;
 	@AndroidFindBy(xpath = "//android.widget.ImageView[@resource-id='org.intelehealth.app:id/camera_switch_iv']")
 	private WebElement camera;
-	@AndroidFindBy(xpath = "//android.widget.ImageView[@resource-id='org.intelehealth.app:id/utils_take_picture']")
+	@AndroidFindBy(id = "org.intelehealth.app:id/utils_take_picture")
 	private WebElement captureButton;
 
-	@AndroidFindBy(accessibility = "Identification First Screen Profile ImageView")
+	@AndroidFindBy(id = "org.intelehealth.app:id/patient_imgview")
 	private WebElement image;
 
-	@AndroidFindBy(accessibility = "Visit Summary Patient Name TextView")
+	@AndroidFindBy(id = "org.intelehealth.app:id/textView_name_value")
 	private WebElement lblVisitSummaryPatientName;
-	@AndroidFindBy(accessibility = "Visit Summary Patient OpenMRS ID TextView")
+	@AndroidFindBy(id = "org.intelehealth.app:id/textView_id_value")
 	private WebElement lblVisitSummaryPatientID;
 
-	@AndroidFindBy(accessibility = "Visit Summary Item Card Vitals Title TextView")
+	@AndroidFindBy(xpath = "//android.widget.TextView[@text='Vitals']")
 	private WebElement lblVisitSummaryVitalsSubTitle;
 
 	// Actions for interacting with page elements
@@ -274,9 +295,14 @@ public class AddNewPatientPage extends BaseTest {
 	}
 
 	// Click on the "Accept" button to confirm or acknowledge an action
-	public void clickOnAcceptButton() throws InterruptedException {
+	public void clickOnAcceptButton() {
 		click(acceptButton);
 		click(acceptButtonInProcessingPersonalData);
+
+	}
+
+	public void clickOnAcceptButtonInTeleConsultation() throws InterruptedException {
+		click(acceptButton);
 
 	}
 
@@ -325,6 +351,7 @@ public class AddNewPatientPage extends BaseTest {
 	}
 
 	// Select the year from the dropdown
+
 	public void selectYear() throws InterruptedException {
 		for (int scrollcount = 0; scrollcount < 5; scrollcount++) {
 			try {
@@ -337,6 +364,7 @@ public class AddNewPatientPage extends BaseTest {
 
 			}
 		}
+
 	}
 
 	public String getSelectedYearText() {
@@ -345,8 +373,6 @@ public class AddNewPatientPage extends BaseTest {
 
 	// Select a date by interacting with the date element
 	public void selectDate() throws InterruptedException {
-
-		Thread.sleep(0);
 		click(date);
 	}
 
@@ -705,7 +731,7 @@ public class AddNewPatientPage extends BaseTest {
 	// expected text
 	public boolean verifyNationalIDUpdateIsSuccessful(String expectedText) {
 		try {
-			String actualText = updatedName.getAttribute("value");
+			String actualText = updatedName.getAttribute("text");
 			return actualText.equals(expectedText);
 		} catch (Exception e) {
 			// Handle any exceptions here (e.g., element not found)
@@ -785,8 +811,8 @@ public class AddNewPatientPage extends BaseTest {
 	}
 
 	// Click on the arrow (presumably for navigation)
-	public void clickOnArrow() throws InterruptedException {
-		tapElement(arrow);
+	public void clickOpenVisitChiefComplaint() throws InterruptedException {
+		tapElement(lblOpnVisitChiefComplaint);
 
 		// click(arrow, "Clicked on the 'Arrow' for navigation");
 	}
@@ -806,19 +832,19 @@ public class AddNewPatientPage extends BaseTest {
 			return false;
 		}
 
-		scrollToTextContains_Android("Physical Examination");
+		scrollDown();
 		boolean isPhysicalExaminationDisplayed = isDisplayed(physicalExamination,
 				"Past Visit Summary Screen - Physical Examination is Displayed");
 
-		scrollToTextContains_Android("Medical history");
+		scrollDown();
 		boolean isMedicalHistoryDisplayed = isDisplayed(medicalHistory,
 				"Past Visit Summary Screen - Medical History is Displayed");
-		scrollToTextContains_Android("Priority Visits");
+		scrollDown();
 
 		boolean areOtherElementsDisplayed = isDisplayed(additionalDocument,
 				"Past Visit Summary Screen - Additional Document is Displayed")
 				&& isDisplayed(doctorsSpeciality, "Past Visit Summary Screen - Doctor's Speciality is Displayed")
-				&& isDisplayed(shareButton, "Past Visit Summary Screen - Share Button is Displayed")
+				&& isDisplayed(btnViewPrescription, "Past Visit Summary Screen - View Prescription Button is Displayed")
 				&& isDisplayed(chatIcon, "Past Visit Summary Screen - Chat Icon is Displayed");
 
 		// Combine all checks into a single result
@@ -846,15 +872,15 @@ public class AddNewPatientPage extends BaseTest {
 			return false;
 		}
 
-		scrollToTextContains_Android("Physical Examination");
+		scrollDown();
 
 		boolean phyExam = isDisplayed(physicalExamination,
 				"Open Visit Summary Screen - Physical Examination  is Dsiplayed");
-		scrollToTextContains_Android("Medical history");
+		scrollDown();
 		boolean isMedicalHistoryDisplayed = isDisplayed(medicalHistory,
 				"Open Visit Summary Screen - Medical History  is Dsiplayed");
-		scrollToTextContains_Android("Priority Visits");
-
+		//scrollToTextContains_Android("Priority Visits");
+scrollDown();
 		boolean remainingElementsDisplayed = isDisplayed(additionalDocument,
 				"Open Visit Summary Screen - Additional Document  is Dsiplayed")
 				&& isDisplayed(doctorsSpeciality, "Open Visit Summary Screen - Doctor's Speciality  is Dsiplayed")
@@ -934,6 +960,7 @@ public class AddNewPatientPage extends BaseTest {
 
 		// Click on the 'Continue' button to proceed with the registration process
 		clickOnContinueButton();
+		clickOnAcceptButtonInTeleConsultation();
 
 	}
 
@@ -1021,37 +1048,28 @@ public class AddNewPatientPage extends BaseTest {
 		// Click on the 'Date of Birth' icon to set the patient's birthdate
 		clickOnDobIcon();
 
-		// Click on the month spinner to select the birth month
-		clickOnMonthSpinner();
-		selectMonth();
+		// Select the month and wait for a while
+		// addNewPatientPage.clickOnMonthSpinner();
+		Thread.sleep(3000);
+		// addNewPatientPage.selectMonth();
 
-		// Click on the year spinner to select the birth year
+		// Select the year
 		clickOnYearSpinner();
+		Thread.sleep(3000);
+		// addNewPatientPage.scrollToViewYear();
+		Thread.sleep(3000);
 
-		// Scroll to view and select the birth year
-		scrollToViewYear();
 		selectYear();
 
-		// Select the birth date
+		// Select the date and click on the Okay button
 		selectDate();
-
-		// Click on the 'Okay' button to confirm the selected date
 		clickOnOkayButton();
 
+		enterPhoneNumber();
 		// Move to the next registration step
 		clickOnNextButton1();
 
 		// Select the state of the patient's address
-		clickOnStateSpinner();
-		scrollToViewState();
-		selectState();
-
-		// Select the district of the patient's address
-		clickOnDistrictSpinner();
-		scrollToViewDistrict();
-		selectDistrict();
-
-		// Enter the patient's address details
 		enterPatientAddressDetails(code, village, address1, address2);
 
 		// Move to the next registration step
@@ -1078,12 +1096,17 @@ public class AddNewPatientPage extends BaseTest {
 	// Add a profile picture and verify the process
 	public void addProfilePictureAndVerify() {
 		click(addNewPatientButton, "Clicked on 'Add Patients'");
-		click(acceptButton, "Accepted the Privacy Policy");
+		clickOnAcceptButton();
+		// click(acceptButton, "Accepted the Privacy Policy");
 		click(addPicture, "Clicked on 'Add Picture'");
-		click(camera, "Clicked on 'Camera'");
+		// click(camera, "Clicked on 'Camera'");
 		click(captureButton, "Captured an Image");
 
-		isDisplayed(image, "Captured Image is Displayed");
+	}
+
+	public boolean verifyProfilePictureIsDisplayed() {
+		return isDisplayed(image, "Captured Image is Displayed");
+
 	}
 
 	public boolean verifyDashboardScreenIsVisible() {
